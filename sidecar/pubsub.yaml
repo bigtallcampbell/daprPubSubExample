@@ -1,0 +1,29 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub
+  namespace: default
+spec:
+  type: pubsub.rabbitmq
+  version: v1
+  metadata:
+  - name: host
+    value: "amqp://mqttRouter:5672"
+  - name: autoAck
+    value: true
+  - name: deliveryMode
+    value: 0
+  - name: prefetchCount
+    value: 0
+  - name: concurrencyMode
+    value: parallel
+  - name: backOffInitialInterval
+    value: 100
+  - name: backOffMaxRetries
+    value: 16
+  - name: enableDeadLetter # Optional enable dead Letter or not
+    value: true
+  - name: maxLen # Optional max message count in a queue
+    value: 3000
+  - name: maxLenBytes # Optional maximum length in bytes of a queue.
+    value: 10485760

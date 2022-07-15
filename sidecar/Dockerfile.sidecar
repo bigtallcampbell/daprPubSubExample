@@ -1,0 +1,7 @@
+#Used with pubsub.yaml to setup a typical dapr backend with pubsub
+FROM mcr.microsoft.com/daprio/daprd:1.8.0-msft-1
+
+COPY ./pubsub.yaml /tmp/pubsub.yaml
+
+ENTRYPOINT ["/daprd", "-app-port", "50051", "-app-protocol", "grpc", "-components-path", "/tmp"]
+CMD ["-app-id", "hostsvc-example"]

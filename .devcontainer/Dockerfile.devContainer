@@ -1,0 +1,27 @@
+ARG VARIANT="6.0-bullseye-slim"
+FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-${VARIANT}
+
+RUN wget https://raw.githubusercontent.com/microsoft/artifacts-credprovider/master/helpers/installcredprovider.sh \
+   && chmod +x installcredprovider.sh \
+   && ./installcredprovider.sh
+
+RUN mkdir -p /usr/include/dapr/proto \
+    && curl -L https://api.github.com/repos/dapr/dapr/tarball | tar xz -C /usr/include/dapr/proto --wildcards "*/dapr/**/*.proto" --strip-components=3
+
+
+RUN PROTOC_VERSION=$(curl -s "https://api.github.com/repos/protocolbuffers/protobuf/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+') \
+    && PROTOC_ZIP=protoc-${PROTOC_VERSION}-linux-x86_64.zip \
+    && echo "Using PROTOC_VERSION '$PROTOC_VERSION'" \
+    && mkdir -p /tmp/protoc \
+    && curl --output /tmp/protoc.zip -L "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_ZIP}" \
+    && unzip -d /usr /tmp/protoc.zip
+
+RUN PROTOCURL_VERSION=$(curl -s "https://api.github.com/repos/qaware/protocurl/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+') \
+    && PROTOCURL_ZIP=protocurl_${PROTOCURL_VERSION}_linux_amd64.zip \
+    && echo "Using PROTOCURL_VERSION '$PROTOCURL_VERSION'" \
+    && curl --output /tmp/protocurl.zip -L "https://github.com/qaware/protocurl/releases/download/v${PROTOCURL_VERSION}/${PROTOCURL_ZIP}" \
+    && mkdir -p /tmp/protocurl \
+    && unzip -d /tmp/protocurl /tmp/protocurl.zip \
+    && cp /tmp/protocurl/bin/protocurl /usr/bin/ \
+    && cp /tmp/protocurl/protocurl-internal /usr/ -r \
+    && rm /tmp/protocurl.zip

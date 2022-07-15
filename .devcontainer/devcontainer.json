@@ -1,0 +1,32 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.234.0/containers/dotnet-mssql
+{
+	"name": "daprPubSubExample",
+	"dockerComposeFile": "docker-compose.devContainer.yml",
+	"service": "app",
+	"workspaceFolder": "/daprPubSubExample",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-dotnettools.csharp"
+	],
+
+	//Remove telemetry gathering on dotnet
+	"containerEnv": {
+		"DOTNET_CLI_TELEMETRY_OPTOUT": "true"
+	},
+
+	//These actually run on the host and build our base images.
+	"initializeCommand": "bash ./.devcontainer/build-network.sh ./.devcontainer/devcontainer.env ; bash ./.devcontainer/build-mqttRouter_Image.sh ./.devcontainer/devcontainer.env ; bash ./.devcontainer/build-sidecar_Image.sh ./.devcontainer/devcontainer.env",
+	"onCreateCommand": "",
+	"postStartCommand": "",
+	"postAttachCommand": "",
+	"features": {
+		"docker-from-docker": "latest"
+	}
+}
